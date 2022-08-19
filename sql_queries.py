@@ -60,31 +60,31 @@ songplay_table_create = ("""
     CREATE TABLE songplay(
     songplay_id INTEGER IDENTITY(0,1) PRIMARY KEY ,
     start_time BIGINT sortkey,
-    user_id INT distkey,
-    level VARCHAR,
-    song_id VARCHAR,
-    artist_id VARCHAR,
+    user_id INT NOT NULL distkey,
+    level TEXT,
+    song_id TEXT NOT NULL,
+    artist_id TEXT NOT NULL,
     session_id INT,
-    location VARCHAR,
+    location TEXT,
     user_agent TEXT
     )
  """)
 
 user_table_create = ("""
     CREATE TABLE users(
-    user_id INT,
-    first_name VARCHAR,
-    last_name VARCHAR,
-    gender VARCHAR,
-    level VARCHAR
+    user_id INT NOT NULL,
+    first_name TEXT,
+    last_name TEXT,
+    gender TEXT,
+    level TEXT
     ) diststyle all;
 """)
 
 song_table_create = ("""
     CREATE TABLE song(
-    song_id VARCHAR PRIMARY KEY,
-    title VARCHAR,
-    artist_id VARCHAR,
+    song_id TEXT NOT NULL,
+    title TEXT,
+    artist_id TEXT,
     year INT sortkey,
     duration DECIMAL(9)
     ) diststyle all;
@@ -92,17 +92,17 @@ song_table_create = ("""
 
 artist_table_create = ("""
     CREATE TABLE artist(
-    artist_id VARCHAR PRIMARY KEY,
-    name VARCHAR,
-    location VARCHAR,
-    lattitude VARCHAR,
-    longtitude VARCHAR
-    ) diststyle all;
+    artist_id TEXT NOT NULL,
+    name TEXT,
+    location VARCHAR(1024),
+    lattitude FLOAT,
+    longtitude FLOAT
+    );
 """)
 
 time_table_create = ("""
     CREATE TABLE time(
-    start_time TIMESTAMP PRIMARY KEY sortkey ,
+    start_time TIMESTAMP NOT NULL sortkey ,
     hour INTEGER,
     day INTEGER,
     week INTEGER,
@@ -119,7 +119,7 @@ staging_events_copy = ("""
     FROM {}
     IAM_ROLE {}
     format as JSON {};
-""").format(config['S3'].get('LOG_DATA'),config['S3'].get('LOG_JSONPATH'),config['IAM_ROLE'].get('ARN'))
+""").format(config['S3'].get('LOG_DATA'),config['IAM_ROLE'].get('ARN'),config['S3'].get('LOG_JSONPATH'))
 
 staging_songs_copy = ("""
     COPY staging_song
@@ -158,6 +158,7 @@ user_table_insert = ("""
            se.gender,
            se.level
     FROM staging_event se
+    WHERE page='NextSong'
 """)
 
 song_table_insert = ("""
@@ -175,7 +176,7 @@ artist_table_insert = ("""
     INSERT INTO artist (artist_id,name,location,lattitude,longtitude)
     SELECT DISTINCT
            ss.artist_id AS artist_id,
-           ss.artist_name,
+           ss.artist_name AS name,
            ss.artist_location,
            ss.artist_latitude,
            ss.artist_longitude
