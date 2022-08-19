@@ -116,19 +116,19 @@ time_table_create = ("""
 
 staging_events_copy = ("""
     COPY staging_event
-    FROM 's3://udacity-dend/log-data'
+    FROM {}
     IAM_ROLE {}
-    format as JSON 's3://udacity-dend/log_json_path.json';
-""").format(config['IAM_ROLE'].get('ARN'))
+    format as JSON {};
+""").format(config['S3'].get('LOG_DATA'),config['S3'].get('LOG_JSONPATH'),config['IAM_ROLE'].get('ARN'))
 
 staging_songs_copy = ("""
     COPY staging_song
-    FROM 's3://udacity-dend/song_data/A/'
+    FROM {}
     IAM_ROLE {}
     COMPUPDATE OFF
     TIMEFORMAT as 'epochmillisecs'
     JSON 'auto'
-""").format(config['IAM_ROLE'].get('ARN'))
+""").format(config['S3'].get('SONG_DATA'),config['IAM_ROLE'].get('ARN'))
 
 # FINAL TABLES
 
