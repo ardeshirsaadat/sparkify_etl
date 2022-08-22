@@ -72,7 +72,7 @@ songplay_table_create = ("""
 
 user_table_create = ("""
     CREATE TABLE users(
-    user_id INT NOT NULL,
+    user_id INT PRIMARY KEY,
     first_name TEXT,
     last_name TEXT,
     gender TEXT,
@@ -82,7 +82,7 @@ user_table_create = ("""
 
 song_table_create = ("""
     CREATE TABLE song(
-    song_id TEXT NOT NULL,
+    song_id TEXT PRIMARY KEY,
     title TEXT,
     artist_id TEXT,
     year INT sortkey,
@@ -92,7 +92,7 @@ song_table_create = ("""
 
 artist_table_create = ("""
     CREATE TABLE artist(
-    artist_id TEXT NOT NULL,
+    artist_id TEXT PRIMARY KEY,
     name TEXT,
     location VARCHAR(1024),
     lattitude FLOAT,
@@ -102,7 +102,7 @@ artist_table_create = ("""
 
 time_table_create = ("""
     CREATE TABLE time(
-    start_time TIMESTAMP NOT NULL sortkey ,
+    start_time TIMESTAMP PRIMARY KEY sortkey ,
     hour INTEGER,
     day INTEGER,
     week INTEGER,
